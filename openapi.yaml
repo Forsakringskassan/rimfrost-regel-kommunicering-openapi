@@ -1,0 +1,178 @@
+openapi: 3.0.4
+info:
+  title: Kommunicering API
+  version: 1.0.0
+  description: API för att hämta all relevant information för att hantera kommunicering.
+
+paths:
+  /{handlaggningId}:
+    get:
+      summary: Hämta information som behövs för att hantera kommunicering
+      description: Hämta information som behövs för att hantera kommunicering
+      parameters:
+        - $ref: "#/components/parameters/HandlaggningId"
+      responses:
+        "200":
+          description: Information hämtad OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetDataResponse"
+        "400":
+          description: Ogiltig begäran
+        "403":
+          description: Åtkomst nekad
+        "404":
+          description: Informationen hittades inte
+        "500":
+          description: Internt serverfel
+        "503":
+          description: Tjänsten är inte tillgänglig
+    patch:
+      summary: Uppdatera information om ersättning
+      description: Uppdatera information om ersättning
+      parameters:
+        - $ref: "#/components/parameters/HandlaggningId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchErsattningRequest"
+      responses:
+        "204":
+          description: Uppdatering genomförd OK
+        "400":
+          description: Ogiltig begäran
+        "403":
+          description: Åtkomst nekad
+        "404":
+          description: Informationen hittades inte
+        "500":
+          description: Internt serverfel
+        "503":
+          description: Tjänsten är inte tillgänglig
+
+components:
+  parameters:
+    HandlaggningId:
+      name: handlaggningId
+      in: path
+      required: true
+      description: ID för handläggningsärendet
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    GetDataResponse:
+      type: object
+      properties:
+        handlaggning_id:
+          type: string
+          format: uuid
+        kund:
+          $ref: "#/components/schemas/Kund"
+        ersattningar:
+          type: array
+          items:
+            $ref: "#/components/schemas/Ersattning"
+      required:
+        - handlaggning_id
+        - kund
+        - ersattningar
+
+    PatchErsattningRequest:
+      type: object
+      properties:
+        ersattningar:
+          type: array
+          items:
+            $ref: "#/components/schemas/UpdateErsattning"
+        motivering:
+            type: string
+      required:
+        - ersattningar
+        - motivering
+
+    Kund:
+      type: object
+      properties:
+        efternamn:
+          type: string
+        fornamn:
+          type: string
+        kon:
+          type: string
+          enum: [MAN, KVINNA]
+
+    Ersattning:
+      type: object
+      properties:
+        ersattning_id:
+          type: string
+          format: uuid
+        ersattningstyp:
+          type: string
+        omfattning_procent:
+          type: integer
+        belopp:
+          type: integer
+        berakningsgrund:
+          type: integer
+        beslutsutfall:
+          $ref: "#/components/schemas/Beslutsutfall"
+        avslagsanledning:
+          type: string
+          nullable: true
+        from:
+          type: string
+          format: date
+        tom:
+          type: string
+          format: date
+      required:
+        - ersattning_id
+        - ersattningstyp
+        - omfattning_procent
+        - belopp
+        - berakningsgrund
+        - from
+        - tom
+
+    UpdateErsattning:
+      type: object
+      properties:
+        ersattningId:
+          type: string
+          format: uuid
+        omfattning_procent:
+          type: integer
+        belopp:
+          type: integer
+        berakningsgrund:
+          type: integer
+        beslutsutfall:
+          $ref: "#/components/schemas/Beslutsutfall"
+        avslagsanledning:
+          type: string
+          nullable: true
+        from:
+          type: string
+          format: date
+        tom:
+          type: string
+          format: date
+      required:
+        - ersattningId
+        - omfattning_procent
+        - belopp
+        - berakningsgrund
+        - beslutsutfall
+        - avslagsanledning
+        - from
+        - tom
+
+    Beslutsutfall:
+      type: string
+      enum: [JA, NEJ, FU]
