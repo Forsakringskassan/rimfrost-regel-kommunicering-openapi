@@ -171,8 +171,6 @@ components:
         - omfattning_procent
         - belopp
         - berakningsgrund
-        - beslutsutfall
-        - avslagsanledning
         - from
         - tom
 
