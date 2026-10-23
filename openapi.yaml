@@ -89,6 +89,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/UpdateErsattning"
+          description: Lista av uppdaterade ersättningar
         motivering:
             type: string
       required:
